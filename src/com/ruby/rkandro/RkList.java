@@ -12,6 +12,8 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.ruby.rkandro.pojo.RkListItem;
+import com.searchboxsdk.android.StartAppSearch;
+import com.startapp.android.publish.StartAppAd;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,9 +32,6 @@ import com.google.ads.AdView;
 import com.ruby.rkandro.adapter.RkListAdapter;
 import com.ruby.rkandro.soap.SoapWebServiceInfo;
 import com.ruby.rkandro.soap.SoapWebServiceUtility;
-import com.apperhand.device.android.AndroidSDKProvider;
-import com.startapp.android.publish.HtmlAd;
-import com.startapp.android.publish.model.AdPreferences;
 
 
 public class RkList extends SherlockActivity {
@@ -45,7 +44,7 @@ public class RkList extends SherlockActivity {
 
     ConnectionDetector cd;
 
-    private HtmlAd htmlAd = null;
+    private StartAppAd startAppAd = new StartAppAd(this);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,12 +53,8 @@ public class RkList extends SherlockActivity {
         setContentView(R.layout.activity_rk_list);
         getSupportActionBar().setTitle(Html.fromHtml("<b><font color='#333333'>"+getString(R.string.app_name)+"</font></b>"));
 
-        //AndroidSDKProvider.setTestMode(true);
-        AndroidSDKProvider.initSDK(this);
-        AdPreferences adPreferences = new AdPreferences("105147417", "205460888", AdPreferences.TYPE_INAPP_EXIT);
-
-        htmlAd = new HtmlAd(this);
-        htmlAd.load(adPreferences, null);
+        StartAppSearch.init(this);
+        startAppAd.loadAd();
 
         // creating connection detector class instance
         cd = new ConnectionDetector(getApplicationContext());
@@ -97,12 +92,21 @@ public class RkList extends SherlockActivity {
         AppRater.app_launched(RkList.this);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        startAppAd.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        startAppAd.onPause();
+    }
 
     @Override
     public void onBackPressed() {
-        if(htmlAd != null){
-            htmlAd.show();
-        }
+        startAppAd.onBackPressed();
         this.finish();
     }
 
