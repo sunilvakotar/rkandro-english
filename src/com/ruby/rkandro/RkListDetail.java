@@ -1,29 +1,25 @@
 package com.ruby.rkandro;
 
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
 import android.view.View;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.google.ads.AdRequest;
-import com.google.ads.AdView;
-import com.ruby.rkandro.adapter.RkListAdapter;
+import com.lmsa.cqkv143768.AdCallbackListener;
+import com.lmsa.cqkv143768.AdView;
+import com.lmsa.cqkv143768.AirPlay;
 import com.ruby.rkandro.pojo.RkListItem;
 import com.ruby.rkandro.soap.SoapWebServiceInfo;
 import com.ruby.rkandro.soap.SoapWebServiceUtility;
@@ -31,14 +27,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class RkListDetail extends SherlockActivity {
+public class RkListDetail extends SherlockActivity implements AdCallbackListener.MraidCallbackListener{
 
-    public static final long NOTIFY_INTERVAL = 240 * 1000; // 10 seconds
+    public static final long NOTIFY_INTERVAL = 240 * 1000; // 240 seconds, 4 minutes
     // run on another Thread to avoid crash
     private Handler mHandler = new Handler();
     // timer handling
@@ -50,10 +44,55 @@ public class RkListDetail extends SherlockActivity {
     private String name;
 	
 	TextView textDescription;
-    ImageView closeButton;
-    RelativeLayout adsLayout;
-
+    //ImageView closeButton;
+    //RelativeLayout adsLayout;
+    AirPlay airPlay;
     ConnectionDetector cd;
+
+    AdCallbackListener adCallbackListener = new AdCallbackListener() {
+        @Override
+        public void onSmartWallAdShowing() {
+            //Toast.makeText(RkListDetail.this, "onAdCached", Toast.LENGTH_SHORT).show();
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void onSmartWallAdClosed() {
+            //Toast.makeText(RkListDetail.this, "onSmartWallAdClosed", Toast.LENGTH_SHORT).show();
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void onAdError(String s) {
+            //Toast.makeText(RkListDetail.this, "onAdError:"+s, Toast.LENGTH_SHORT).show();
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void onSDKIntegrationError(String s) {
+            //Toast.makeText(RkListDetail.this, "onSDKIntegrationError", Toast.LENGTH_SHORT).show();
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void onVideoAdFinished() {
+            //Toast.makeText(RkListDetail.this, "onVideoAdFinished", Toast.LENGTH_SHORT).show();
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void onVideoAdShowing() {
+            //Toast.makeText(RkListDetail.this, "onVideoAdShowing", Toast.LENGTH_SHORT).show();
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void onAdCached(AdType adType) {
+            //Toast.makeText(RkListDetail.this, "onAdCached", Toast.LENGTH_SHORT).show();
+            //airPlay.showCachedAd(RkListDetail.this, AdType.appwall);
+        }
+    };
+
 	public void onCreate(Bundle savedInstanceState) {
 	
 		super.onCreate(savedInstanceState);
@@ -83,10 +122,18 @@ public class RkListDetail extends SherlockActivity {
             // Look up the AdView as a resource and load a request.
             new RkDescription().execute(new Object());
 
-            AdView adViewPopup = (AdView) this.findViewById(R.id.adviewpopup);
-            adViewPopup.loadAd(new AdRequest());
+            airPlay=new AirPlay(this, adCallbackListener, true);
+            airPlay.startSmartWallAd();
+            airPlay.showRichMediaInterstitialAd();
 
-            adsLayout = (RelativeLayout) findViewById(R.id.popupWithCross);
+            /*AdView adView=new AdView(this, AdView.BANNER_TYPE_IN_APP_AD, AdView.PLACEMENT_TYPE_INTERSTITIAL, false, false,
+                    AdView.ANIMATION_TYPE_LEFT_TO_RIGHT);
+            adView.setAdListener(this);
+            AdView adView=(AdView)findViewById(R.id.adviewpopup);
+            adView.setAdListener(this); */
+
+
+            /*adsLayout = (RelativeLayout) findViewById(R.id.popupWithCross);
             closeButton = (ImageView) findViewById(R.id.closeBtn);
             closeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -94,7 +141,7 @@ public class RkListDetail extends SherlockActivity {
                     adsLayout.setVisibility(View.GONE);
                     //Toast.makeText(getApplicationContext(), "Close ads", Toast.LENGTH_SHORT).show();
                 }
-            });
+            });*/
 
             if (mTimer != null) {
                 mTimer.cancel();
@@ -157,6 +204,49 @@ public class RkListDetail extends SherlockActivity {
         super.onDestroy();
     }
 
+    @Override
+    public void onAdLoadingListener() {
+        //Toast.makeText(RkListDetail.this, "onAdLoadingListener", Toast.LENGTH_SHORT).show();
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onAdLoadedListener() {
+        //Toast.makeText(RkListDetail.this, "onAdLoadedListener", Toast.LENGTH_SHORT).show();
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onErrorListener(String s) {
+        //Toast.makeText(RkListDetail.this, "onErrorListener:"+s, Toast.LENGTH_SHORT).show();
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onCloseListener() {
+        //Toast.makeText(RkListDetail.this, "onCloseListener", Toast.LENGTH_SHORT).show();
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onAdExpandedListner() {
+        //Toast.makeText(RkListDetail.this, "onAdExpandedListner", Toast.LENGTH_SHORT).show();
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onAdClickListener() {
+        //Toast.makeText(RkListDetail.this, "onAdClickListener", Toast.LENGTH_SHORT).show();
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void noAdAvailableListener() {
+        //Toast.makeText(RkListDetail.this, "noAdAvailableListener", Toast.LENGTH_SHORT).show();
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    private boolean smartAd = false;
     class PopupDisplayTimerTask extends TimerTask {
 
         @Override
@@ -166,12 +256,21 @@ public class RkListDetail extends SherlockActivity {
 
                 @Override
                 public void run() {
+                    if(smartAd){
+                        airPlay.showRichMediaInterstitialAd();
+                        airPlay.showCachedAd(RkListDetail.this, AdCallbackListener.AdType.smartwall);
+                        smartAd = false;
+                    }else {
+                        airPlay.startSmartWallAd();
+                        airPlay.showCachedAd(RkListDetail.this, AdCallbackListener.AdType.interstitial);
+                        smartAd = true;
+                    }
                     // Make popup ad visible
-                    if(adsLayout.getVisibility() == View.GONE){
+                    /*if(adsLayout.getVisibility() == View.GONE){
                         adsLayout.setVisibility(View.VISIBLE);
                         // display toast
                         //Toast.makeText(getApplicationContext(), "Popup show", Toast.LENGTH_SHORT).show();
-                    }
+                    }*/
                 }
 
             });

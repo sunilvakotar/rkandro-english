@@ -13,6 +13,11 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
 
     <application
             android:icon="@drawable/icon"
@@ -43,6 +48,19 @@
         <!-- Your developer ID and app ID -->
         <meta-data android:name="com.startapp.android.DEV_ID" android:value= "105147417"/>
         <meta-data android:name="com.startapp.android.APP_ID" android:value= "205460888"/>
+
+        <meta-data android:name="com.lmsa.cqkv143768.APPID" android:value="178714" />
+        <meta-data android:name="com.lmsa.cqkv143768.APIKEY" android:value="android*1365437438143768527"/>
+        <activity android:exported="false" android:name="com.lmsa.cqkv143768.SmartWallActivity"
+                  android:configChanges="orientation|screenSize"
+                  android:theme="@android:style/Theme.Translucent" />
+
+        <activity android:name="com.lmsa.cqkv143768.BrowserActivity"
+                  android:configChanges="orientation|screenSize" />
+        <activity android:name="com.lmsa.cqkv143768.VideoAdActivity"
+                  android:configChanges="orientation|screenSize" android:screenOrientation="landscape"
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
 
     </application>
 </manifest>

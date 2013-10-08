@@ -8,9 +8,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.text.Html;
+import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.lmsa.cqkv143768.AdCallbackListener;
+import com.lmsa.cqkv143768.AdView;
+import com.lmsa.cqkv143768.AirPlay;
 import com.ruby.rkandro.pojo.RkListItem;
 import com.searchboxsdk.android.StartAppSearch;
 import com.startapp.android.publish.StartAppAd;
@@ -27,14 +31,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.google.ads.AdRequest;
-import com.google.ads.AdView;
 import com.ruby.rkandro.adapter.RkListAdapter;
 import com.ruby.rkandro.soap.SoapWebServiceInfo;
 import com.ruby.rkandro.soap.SoapWebServiceUtility;
 
 
-public class RkList extends SherlockActivity {
+public class RkList extends SherlockActivity implements AdCallbackListener.MraidCallbackListener {
 
     private ListView lv;
     private ProgressDialog progressDialog;
@@ -45,6 +47,7 @@ public class RkList extends SherlockActivity {
     ConnectionDetector cd;
 
     private StartAppAd startAppAd = new StartAppAd(this);
+    AirPlay airPlay;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,9 +83,9 @@ public class RkList extends SherlockActivity {
             });
             new RkDetail().execute(new Object());
 
-            // Look up the AdView as a resource and load a request.
-            AdView adView = (AdView) this.findViewById(R.id.adview);
-            adView.loadAd(new AdRequest());
+            airPlay=new AirPlay(this, adCallbackListener, true);
+            AdView adView=(AdView)findViewById(R.id.myAdView);
+            adView.setAdListener(this);
         } else {
             // Internet connection is not present
             // Ask user to connect to Internet
@@ -149,6 +152,41 @@ public class RkList extends SherlockActivity {
         return details;
     }
 
+    @Override
+    public void onAdLoadingListener() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onAdLoadedListener() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onErrorListener(String s) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onCloseListener() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onAdExpandedListner() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onAdClickListener() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void noAdAvailableListener() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     class RkDetail extends AsyncTask<Object, Void, String> {
         protected void onPreExecute() {
             super.onPreExecute();
@@ -208,4 +246,48 @@ public class RkList extends SherlockActivity {
         // Showing Alert Message
         alertDialog.show();
     }
+
+    AdCallbackListener adCallbackListener = new AdCallbackListener() {
+        @Override
+        public void onSmartWallAdShowing() {
+            Toast.makeText(RkList.this, "onAdCached", Toast.LENGTH_SHORT).show();
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void onSmartWallAdClosed() {
+            Toast.makeText(RkList.this, "onSmartWallAdClosed", Toast.LENGTH_SHORT).show();
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void onAdError(String s) {
+            Toast.makeText(RkList.this, "onAdError"+s, Toast.LENGTH_SHORT).show();
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void onSDKIntegrationError(String s) {
+            Toast.makeText(RkList.this, "onSDKIntegrationError", Toast.LENGTH_SHORT).show();
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void onVideoAdFinished() {
+            Toast.makeText(RkList.this, "onVideoAdFinished", Toast.LENGTH_SHORT).show();
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void onVideoAdShowing() {
+            Toast.makeText(RkList.this, "onVideoAdShowing", Toast.LENGTH_SHORT).show();
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void onAdCached(AdType adType) {
+            Toast.makeText(RkList.this, "onAdCached", Toast.LENGTH_SHORT).show();
+            airPlay.showCachedAd(RkList.this, AdType.interstitial);
+        }
+    };
 }
