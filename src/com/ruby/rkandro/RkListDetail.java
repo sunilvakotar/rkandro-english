@@ -315,7 +315,6 @@ public class RkListDetail extends SherlockActivity implements AdCallbackListener
             throws JSONException {
         int total = (Integer) jsonObject.get("Total");
         JSONArray detailArray;
-        RkListItem rkListItem;
         String desc = "";
         for (int i = 0; i < total; i++) {
             detailArray = (JSONArray) jsonObject.get("Record" + i);
